@@ -7,7 +7,7 @@ t_config	*config_create(void)
 	config = malloc(sizeof(t_config));
 	if (config == NULL)
 	{
-		write_error_fmt("error: failed to allocate memory.\n");
+		perror("error: failed to allocate memory.\n");
 		return (NULL);
 	}
 	init_config(config);
@@ -128,6 +128,8 @@ int process_file(char *file)
         goto cleanup_document;
     }
     t_config *config = config_create();
+    if (!config)
+        return (EXIT_FAILURE);
 
     if (parse_programs(&document, root, config) != EXIT_SUCCESS)
     {
@@ -158,9 +160,9 @@ int process_file(char *file)
             memset(config->programs[i].process, 0 ,sizeof(t_process_runtime) * config->programs[i].numprocs);
             for (int j = 0; j < config->programs[i].numprocs; j++)
             {
-                config->programs[i].process[j].pid = launch_process(&config.programs[i]);
-                config->programs[i].process[j].program_config = &config.programs[i];
-                printf("Launched %s[%d] with pid %d\n", config.programs[i].name, j, config.programs[i].process[j].pid);
+                config->programs[i].process[j].pid = launch_process(&config->programs[i]);
+                config->programs[i].process[j].program_config = &config->programs[i];
+                printf("Launched %s[%d] with pid %d\n", config->programs[i].name, j, config->programs[i].process[j].pid);
             }
         }
     }

@@ -126,6 +126,7 @@ int fill_my_program(yaml_document_t *document, yaml_node_t *node, t_program_conf
             snprintf(program->env[i], size_of_node, "%s=%s", ki, val);
             i++;
             pair_env++;
+            program->env[i - 1] = NULL;
         }
     }
 

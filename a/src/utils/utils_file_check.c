@@ -14,13 +14,13 @@ int check_file_extension(const char *file, const char *file_ext)
         return (EXIT_FAILURE);
     }
 
-    if (strcmp(dot, file_ext) == 0)
+    if (strcmp(dot + 1, file_ext) == 0)
     {
-        fprintf(stderr, "Error: can't find file extension\n");
-        return (EXIT_FAILURE);
+        return (EXIT_SUCCESS);
     }
-
-    return (EXIT_SUCCESS);
+    
+    fprintf(stderr, "Error: can't find file extension\n");
+    return (EXIT_FAILURE);
 }
 
 void print_yaml_node(yaml_document_t *document, yaml_node_t *node, int indent)

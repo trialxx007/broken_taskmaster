@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "utils.h"
+#include "shell.h"
 
 int	main(int ac, char **av)
 {
@@ -14,6 +15,8 @@ int	main(int ac, char **av)
 
 	if (process_file(av[1]) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
+	
+	shell_run();
 
 	// printf("Well done !\n");
 

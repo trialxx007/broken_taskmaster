@@ -1,5 +1,19 @@
 #include "config.h"
 
+t_config	*config_create(void)
+{
+	t_config	*config;
+
+	config = malloc(sizeof(t_config));
+	if (config == NULL)
+	{
+		write_error_fmt("error: failed to allocate memory.\n");
+		return (NULL);
+	}
+	init_config(config);
+	return (config);
+}
+
 yaml_node_t *find_value_by_key(yaml_document_t *document, yaml_node_t *mapping, const char *key)
 {
     yaml_node_pair_t *pair = mapping->data.mapping.pairs.start;
@@ -113,39 +127,39 @@ int process_file(char *file)
         ret = EXIT_FAILURE;
         goto cleanup_document;
     }
-    t_config config = {0};
+    t_config *config = config_create();
 
-    if (parse_programs(&document, root, &config) != EXIT_SUCCESS)
+    if (parse_programs(&document, root, config) != EXIT_SUCCESS)
     {
         ret = EXIT_FAILURE;
         goto cleanup_document;
     }
-    g_config = &config;
+    g_config = config;
     signal(SIGCHLD, handler_sigchld);
-    for (int i = 0; i < config.programs_count; i++)
+    for (int i = 0; i < config->programs_count; i++)
     {
-        printf("Program: %s\n", config.programs[i].name);
-        printf("  cmd: %s\n", config.programs[i].cmd);
-        printf("  numprocs: %d\n", config.programs[i].numprocs);
-        printf("  autostart: %d\n", config.programs[i].autostart);
-        printf("  stopsignal: %d\n", config.programs[i].stopsignal);
-        printf("  exitcodes_count: %d\n", config.programs[i].exitcodes_count);
-        for (int j = 0; j < config.programs[i].exitcodes_count; j++)
-            printf("  exitcode[%d]: %d\n", j, config.programs[i].exitcodes[j]);
-        for (int j = 0; j < config.programs[i].env_count; j++)
-            printf("  env[%d]: %s\n", j, config.programs[i].env[j]);
+        printf("Program: %s\n", config->programs[i].name);
+        printf("  cmd: %s\n", config->programs[i].cmd);
+        printf("  numprocs: %d\n", config->programs[i].numprocs);
+        printf("  autostart: %d\n", config->programs[i].autostart);
+        printf("  stopsignal: %d\n", config->programs[i].stopsignal);
+        printf("  exitcodes_count: %d\n", config->programs[i].exitcodes_count);
+        for (int j = 0; j < config->programs[i].exitcodes_count; j++)
+            printf("  exitcode[%d]: %d\n", j, config->programs[i].exitcodes[j]);
+        for (int j = 0; j < config->programs[i].env_count; j++)
+            printf("  env[%d]: %s\n", j, config->programs[i].env[j]);
     }
 
-    for (int i = 0; i < config.programs_count ; i++)
+    for (int i = 0; i < config->programs_count ; i++)
     {
-        if (config.programs[i].autostart)
+        if (config->programs[i].autostart)
         {
-            config.programs[i].process = malloc(sizeof(t_process_runtime) * config.programs[i].numprocs);
-            memset(config.programs[i].process, 0 ,sizeof(t_process_runtime) * config.programs[i].numprocs);
-            for (int j = 0; j < config.programs[i].numprocs; j++)
+            config->programs[i].process = malloc(sizeof(t_process_runtime) * config->programs[i].numprocs);
+            memset(config->programs[i].process, 0 ,sizeof(t_process_runtime) * config->programs[i].numprocs);
+            for (int j = 0; j < config->programs[i].numprocs; j++)
             {
-                config.programs[i].process[j].pid = launch_process(&config.programs[i]);
-                config.programs[i].process[j].program_config = &config.programs[i];
+                config->programs[i].process[j].pid = launch_process(&config.programs[i]);
+                config->programs[i].process[j].program_config = &config.programs[i];
                 printf("Launched %s[%d] with pid %d\n", config.programs[i].name, j, config.programs[i].process[j].pid);
             }
         }

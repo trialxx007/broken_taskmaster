@@ -10,7 +10,7 @@ INCLUDES		+= -I$(HOME)/.local/include
 
 CFLAGS 			+= $(INCLUDES)
 
-YAMLFLAGS		:= -L$(HOME)/.local/lib -lyaml
+YAMLFLAGS		:= -L$(HOME)/.local/lib -lyaml -lreadline -lhistory
 
 CFLAGS			+= $(YAMLFLAGS)
 

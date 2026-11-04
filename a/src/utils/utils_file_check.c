@@ -6,7 +6,7 @@
 
 int check_file_extension(const char *file, const char *file_ext)
 {
-    char *dot = strrchr(file, '.');
+    const char *dot = strrchr(file, '.');
 
     if (!dot || dot == file || *(dot + 1) == '\0')
     {
